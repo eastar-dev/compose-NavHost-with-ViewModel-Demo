@@ -90,7 +90,7 @@ private fun MainActivityApp() {
         }
     ) {
         Box(modifier = Modifier.padding(it)) {
-            val viewModel2: MainActivityViewModel = viewModel()
+            val viewModel2: MainActivityViewModel = hiltViewModel()
             Log.e(viewModel2)
             NavHost(
                 navController = navController,
@@ -114,7 +114,7 @@ private fun MainActivityApp() {
 @Composable
 fun Greeting(name: String) {
     val viewModel_X: MainActivityViewModel = hiltViewModel()
-    Log.a(viewModel_X)
+    Log.a(viewModel_X,viewModel_X.sayHello())
     Text(text = "Hello $name!")
 }
 
