@@ -1,5 +1,6 @@
 package dev.eastar.composewithviewmodeldemo.ui.main
 
+import android.annotation.SuppressLint
 import android.log.Log
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -27,6 +28,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navigation
 import dagger.hilt.android.AndroidEntryPoint
 import dev.eastar.composewithviewmodeldemo.ui.theme.ComposeWithViewModelDemoTheme
 
@@ -90,21 +92,24 @@ private fun MainActivityApp() {
         }
     ) {
         Box(modifier = Modifier.padding(it)) {
-            val viewModel2: MainActivityViewModel = viewModel()
-            Log.e(viewModel2)
             NavHost(
                 navController = navController,
-                startDestination = Route.Home.route,
+                startDestination = "parent",
             ) {
-                composable(Route.Home.route) {
-                    val viewModel3: MainActivityViewModel = hiltViewModel()
-                    Log.w(viewModel3)
-                    Greeting(Route.Home.route)
-                }
-                composable(Route.Favorite.route) {
-                    val viewModel4: MainActivityViewModel = hiltViewModel()
-                    Log.i(viewModel4)
-                    Greeting(Route.Favorite.route)
+                // https://developer.android.com/jetpack/compose/libraries#hilt-navigation
+                navigation(Route.Home.route, "parent") {
+                    composable(Route.Home.route) {
+                        val parentStackEntry = navController.getBackStackEntry("parent")
+                        val parentViewModel: MainActivityViewModel = hiltViewModel(parentStackEntry)
+                        Log.w(parentViewModel)
+                        Greeting(Route.Home.route)
+                    }
+                    composable(Route.Favorite.route) {
+                        val parentStackEntry = navController.getBackStackEntry("parent")
+                        val parentViewModel: MainActivityViewModel = hiltViewModel(parentStackEntry)
+                        Log.w(parentViewModel)
+                        Greeting(Route.Favorite.route)
+                    }
                 }
             }
         }
@@ -113,8 +118,6 @@ private fun MainActivityApp() {
 
 @Composable
 fun Greeting(name: String) {
-    val viewModel_X: MainActivityViewModel = hiltViewModel()
-    Log.a(viewModel_X)
     Text(text = "Hello $name!")
 }
 
